@@ -16,9 +16,10 @@ module Cybersourcery
       controller
     ]
 
-    def initialize(profile, signer = Signer)
+    def initialize(profile, signer = Signer, params = {})
       @profile              = profile
-      @signer               = signer
+      @signer               = signer || Signer
+      @params               = params
       @signable_fields      = {
         access_key:           @profile.access_key,
         profile_id:           @profile.profile_id,
@@ -49,10 +50,11 @@ module Cybersourcery
     end
 
     def form_fields
+      reference_number = (@params["reference_number"] || '') +"||"+ SecureRandom.hex(16)
       @form_fields ||= signable_fields.dup.merge(
         unsigned_field_names: @profile.unsigned_field_names.join(','),
         transaction_uuid:     SecureRandom.hex(16),
-        reference_number:     SecureRandom.hex(16),
+        reference_number:     reference_number,
         signed_date_time:     time,
         signed_field_names:   nil # make sure it's in data.keys
       ).tap do |data|

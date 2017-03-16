@@ -18,7 +18,7 @@ module Cybersourcery
 
     def self.get_payment(profile_name, params, payment_class_name = 'Payment')
       profile = Cybersourcery::Profile.new(profile_name)
-      signer = Cybersourcery::CybersourceSigner.new(profile)
+      signer = Cybersourcery::CybersourceSigner.new(profile, nil, params)
       payment_class_name.constantize.new(signer, profile, params)
     end
   end
